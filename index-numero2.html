@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>CAYO Uruguay | WhatsApp</title>
+  <meta name="description" content="Chateá con CAYO Uruguay por WhatsApp." />
+  <meta name="theme-color" content="#f5f5f5" />
+  <link rel="icon" href="assets/whatsapp-icon.png" type="image/png" />
+  <link rel="apple-touch-icon" href="assets/whatsapp-icon.png" />
+  <link rel="preload" as="image" href="assets/cayo-uruguay-logo.png" />
+  <link rel="preload" as="image" href="assets/verified-badge.png" />
+  <link rel="preload" as="image" href="assets/whatsapp-icon.png" />
+  <link rel="stylesheet" href="styles.css" />
+
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '767728059169192');
+(function(){
+  function getUTMs(url){
+    var out={}, keys=['utm_source','utm_medium','utm_campaign','utm_content','utm_term'];
+    try{ var u=new URL(url); keys.forEach(function(k){ var v=u.searchParams.get(k); if(v) out[k]=v; }); }catch(e){}
+    return out;
+  }
+  fbq('track', 'PageView', getUTMs(location.href));
+})();
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=767728059169192&ev=PageView&noscript=1" /></noscript>
+<!-- End Meta Pixel Code -->
+</head>
+<body>
+  <main class="page">
+    <section class="card" aria-label="Contacto por WhatsApp">
+      <img class="brand-logo" src="assets/cayo-uruguay-logo.png" alt="Logo de CAYO Uruguay" />
+
+      <div class="profile-name" aria-label="Perfil de marca">
+        <h1>CAYO Uruguay</h1>
+        <img class="verified-badge" src="assets/verified-badge.png" alt="Cuenta verificada" />
+      </div>
+
+      <p class="brand">© 2026 CAYO Uruguay.</p>
+      <p class="instruction">Hacé click para iniciar la conversación por WhatsApp.</p>
+
+      <a id="whatsappButton" class="button" href="#" target="_blank" rel="noopener noreferrer" aria-label="Chatear por WhatsApp con CAYO Uruguay">
+        <img class="button-icon" src="assets/whatsapp-icon.png" alt="" aria-hidden="true" />
+        <span>Chatear por WhatsApp</span>
+      </a>
+    </section>
+
+    <footer class="footer">
+      <p>Todos los derechos reservados.</p>
+      <nav aria-label="Enlaces legales">
+        <a href="politica-de-privacidad.html">Política de Privacidad</a>
+        <span aria-hidden="true"> · </span>
+        <a href="terminos-y-condiciones.html">Términos y Condiciones</a>
+      </nav>
+      <a class="email" href="mailto:cayo.uruguay@gmail.com">Contacto: cayo.uruguay@gmail.com</a>
+    </footer>
+  </main>
+
+  <script>
+    const phoneNumber = "5516988310528";
+    const message = "Hola, quiero iniciar una conversación.";
+
+    function getUTMs(url) {
+      const out = {};
+      const keys = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"];
+      try {
+        const u = new URL(url);
+        keys.forEach((k) => {
+          const v = u.searchParams.get(k);
+          if (v) out[k] = v;
+        });
+      } catch (e) {}
+      return out;
+    }
+
+    function trackWhatsAppClick() {
+      try {
+        if (typeof window.fbq === "function") {
+          window.fbq("trackCustom", "WhatsAppClick", {
+            placement: "main_button",
+            label: "Chatear por WhatsApp",
+            phone_number_id: "numero2",
+            page_path: window.location.pathname || "/",
+            ...getUTMs(window.location.href)
+          });
+        }
+      } catch (e) {}
+    }
+
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    const whatsappButton = document.getElementById("whatsappButton");
+    whatsappButton.href = whatsappUrl;
+    whatsappButton.addEventListener("click", function(event) {
+      event.preventDefault();
+      trackWhatsAppClick();
+      setTimeout(function() {
+        window.location.href = whatsappUrl;
+      }, 650);
+    });
+  </script>
+</body>
+</html>
