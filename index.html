@@ -42,7 +42,7 @@
         const message = "Hola, quiero iniciar una conversación.";
         
         // Formato universal que mejor procesa la app de Facebook
-        const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+        const whatsappUrl = `https://wa.me/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
         window.whatsappUrlGlobal = whatsappUrl;
 
         // Disparo del Pixel
