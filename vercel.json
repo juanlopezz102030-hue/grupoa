@@ -14,7 +14,7 @@
           "value": "(.*(Android|iPhone|iPad|iPod).*)"
         }
       ],
-      "destination": "https://api.whatsapp.com/send?phone=5516988310528&text=Hola,%20quiero%20iniciar%20una%20conversación",
+      "destination": "https://wa.me/send?phone=5516988310528&text=Hola,%20quiero%20iniciar%20una%20conversación",
       "permanent": false
     }
   ]
