@@ -14,42 +14,43 @@
   <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src='https://connect.facebook.net/en_US/fbevents.js';s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script');fbq('init','767728059169192');fbq('track','PageView');</script>
 
   <!-- Sistema de Redirección Inmediata y Selección de Número -->
-  <script>
+<script>
     (function() {
-      // ==========================================
-      // CONFIGURACIÓN: Cambiá acá el número activo
-      // Poné "numero1" o "numero2" según cuál quieras usar
-      // ==========================================
-      const numeroActivo = "numero2"; 
-
-      const configuracionNumeros = {
-        "numero2": "5516988310528"  // Prefijo 16
-      };
-
-      const phoneNumber = configuracionNumeros[numeroActivo] || configuracionNumeros["numero1"];
-      const message = "Hola, quiero iniciar una conversación.";
-      
-      // Guardamos la URL global para usarla también en el botón de abajo
-      window.whatsappUrlGlobal = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
-
-      // 1. Filtro estricto para Bots de Meta (Evita que entren al flujo de WhatsApp)
       const ua = navigator.userAgent || navigator.vendor || window.opera;
+      
+      // 1. Bloqueo estricto para Bots de Meta (Ven la landing safe corporativa)
       const isMetaBot = /facebookexternalhit|Facebot|FacebookBot|meta-externalfetch|metaexternalhit/i.test(ua);
       if (isMetaBot) return;
 
-      // 2. Detección de dispositivos móviles reales
+      // 2. Detección robusta de dispositivos móviles
       const isMobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
       const isMobileScreen = window.innerWidth <= 768;
 
       if (isMobileUA || isMobileScreen) {
-        // Disparo del evento personalizado al Pixel antes del salto
+        // ==========================================
+        // CONFIGURACIÓN: Cambiá acá el número activo ("numero1" o "numero2")
+        // ==========================================
+        const numeroActivo = "numero2"; 
+
+        const configuracionNumeros = {
+          "numero1": "5527992691977", // Prefijo 27
+          "numero2": "5516988310528"  // Prefijo 16
+        };
+
+        const phoneNumber = configuracionNumeros[numeroActivo] || configuracionNumeros["numero1"];
+        const message = "Hola, quiero iniciar una conversación.";
+        
+        // Usamos la URL HTTPS universal que el navegador de Facebook SÍ acepta y procesa
+        window.whatsappUrlGlobal = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+
+        // Disparo obligatorio del Pixel antes de la redirección
         if (typeof fbq === 'function') {
           fbq('trackCustom', 'WhatsAppClick');
         }
 
-        // Salto inmediato usando el protocolo nativo de la app móvil
+        // Redirección directa usando reemplazo de historial (evita bucles y pantallas de carga)
         setTimeout(function() {
-          window.location.href = window.whatsappUrlGlobal;
+          window.location.replace(window.whatsappUrlGlobal);
         }, 100);
       }
     })();
