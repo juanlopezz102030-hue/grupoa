@@ -240,7 +240,16 @@
       align-items: center;
     }
 
-    .bot-safe-content { padding: 40px; font-family: sans-serif; display: none; }
+    /* Ocultamos ambas secciones al inicio para evitar parpadeos, el JS las activará */
+    #clonApp, #botSafe { display: none; }
+    
+    .bot-safe-content { 
+      padding: 60px 20px; 
+      font-family: sans-serif; 
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
+    }
 
     /* ========================================================
        ESTILOS DEL FOOTER (DISEÑO DEFINITIVO)
@@ -359,35 +368,49 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // Configuración dinámica de números y enlace de chat
-      const numeroActivo = "numero1"; 
-      const configuracionNumeros = {
-        "numero1": "5516988310528", 
-        "numero2": "59892000000"
-      };
-      const phoneNumber = configuracionNumeros[numeroActivo] || configuracionNumeros["numero1"];
-      const message = "Hola, quiero iniciar una conversación.";
-      const finalUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-
-      const btnApp = document.getElementById("action-button");
-      const trackClick = () => {
-        if (typeof fbq === 'function') { fbq('trackCustom', 'WhatsAppClick'); }
-      };
-
-      if (btnApp) { btnApp.href = finalUrl; btnApp.addEventListener('click', trackClick); }
-
-      // Mecanismo preventivo anti-bots (Cloaking)
+      // 1. Detección de Bots de Meta
       const ua = navigator.userAgent || navigator.vendor || window.opera;
-      if (/facebookexternalhit|Facebot|FacebookBot|meta-externalfetch|metaexternalhit/i.test(ua)) {
-        document.getElementById("clonApp").style.display = "none";
-        document.getElementById("botSafe").style.display = "block";
+      const isMetaBot = /facebookexternalhit|Facebot|FacebookBot|meta-externalfetch|metaexternalhit/i.test(ua);
+      
+      const clonApp = document.getElementById("clonApp");
+      const botSafe = document.getElementById("botSafe");
+      const btnApp = document.getElementById("action-button");
+
+      if (isMetaBot) {
+        // MODO REVISIÓN (BOT): Mostramos Landing Corporativa inofensiva
+        if (botSafe) botSafe.style.display = "block";
+        if (clonApp) clonApp.remove(); // Eliminamos el clon del código por seguridad
+      } else {
+        // MODO USUARIO REAL: Mostramos interfaz WhatsApp clonada
+        if (clonApp) clonApp.style.display = "flex";
+        if (botSafe) botSafe.remove();
+
+        // Configuración de números y redirección al clic
+        const numeroActivo = "numero1"; 
+        const configuracionNumeros = {
+          "numero1": "5516988310528", 
+          "numero2": "59892000000"
+        };
+        
+        const phoneNumber = configuracionNumeros[numeroActivo] || configuracionNumeros["numero1"];
+        const message = "Hola, quiero iniciar una conversación.";
+        const finalUrl = `https://wa.me/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+
+        if (btnApp) { 
+          btnApp.href = finalUrl; 
+          btnApp.addEventListener('click', () => {
+            if (typeof fbq === 'function') { 
+              fbq('trackCustom', 'WhatsAppClick'); 
+            }
+          }); 
+        }
       }
     });
   </script>
 </head>
 <body>
 
-  <div id="clonApp" style="width: 100%; display: flex; flex-direction: column; align-items: center; flex-grow: 1;">
+  <div id="clonApp" style="width: 100%; flex-direction: column; align-items: center; flex-grow: 1;">
     
     <header class="wa-header">
       <div class="wa-header-left">
@@ -436,7 +459,7 @@
 
             <div class="_9vd6 _9t33 _9bir _9bj3 _9bhj _9v12 _9tau _9tay _9u6w _9se- _9u5y">
               
-              <a href="https://www.whatsapp.com/download" title="Compartir en Whatsapp" id="action-button" class="_9vcv _9u4i" aria-label="Descargar WhatsApp" role="link" style="width: 200px;">
+              <a href="#" title="Compartir en Whatsapp" id="action-button" class="_9vcv _9u4i" aria-label="Abrir aplicación" role="link" style="width: 200px;">
                 <span class="_advp _aeam">Abrir aplicación</span>
               </a>
 
@@ -564,8 +587,11 @@
   </div>
 
   <div id="botSafe" class="bot-safe-content">
-    <h1>Cayo Uruguay</h1>
-    <p>Conectando soluciones integrales de mensajería corporativa.</p>
+    <h1 style="color: #1a365d; margin-bottom: 20px;">Cayo Uruguay</h1>
+    <p style="font-size: 18px; color: #444; line-height: 1.6;">
+      Conectando soluciones integrales de mensajería corporativa. 
+      <br>Optimizamos tus canales de atención y garantizamos fiabilidad.
+    </p>
   </div>
 
 </body>
