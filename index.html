@@ -14,43 +14,50 @@
   <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src='https://connect.facebook.net/en_US/fbevents.js';s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script');fbq('init','767728059169192');fbq('track','PageView');</script>
 
   <!-- Sistema de Redirección Inmediata y Selección de Número -->
-<script>
+<!-- Redirección Forzada Especial para Meta Ads Browser -->
+  <script>
     (function() {
       const ua = navigator.userAgent || navigator.vendor || window.opera;
       
-      // 1. Bloqueo estricto para Bots de Meta (Ven la landing safe corporativa)
+      // 1. Bloqueo estricto para Bots de Meta
       const isMetaBot = /facebookexternalhit|Facebot|FacebookBot|meta-externalfetch|metaexternalhit/i.test(ua);
       if (isMetaBot) return;
 
-      // 2. Detección robusta de dispositivos móviles
+      // 2. Detección de dispositivos móviles
       const isMobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
       const isMobileScreen = window.innerWidth <= 768;
 
       if (isMobileUA || isMobileScreen) {
         // ==========================================
-        // CONFIGURACIÓN: Cambiá acá el número activo ("numero1" o "numero2")
+        // CONFIGURACIÓN: "numero1" o "numero2"
         // ==========================================
         const numeroActivo = "numero2"; 
 
         const configuracionNumeros = {
-          "numero1": "5527992691977", // Prefijo 27
-          "numero2": "5516988310528"  // Prefijo 16
+          "numero1": "5527992691977",
+          "numero2": "5516988310528"
         };
 
         const phoneNumber = configuracionNumeros[numeroActivo] || configuracionNumeros["numero1"];
         const message = "Hola, quiero iniciar una conversación.";
         
-        // Usamos la URL HTTPS universal que el navegador de Facebook SÍ acepta y procesa
-        window.whatsappUrlGlobal = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+        // Formato universal que mejor procesa la app de Facebook
+        const whatsappUrl = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
+        window.whatsappUrlGlobal = whatsappUrl;
 
-        // Disparo obligatorio del Pixel antes de la redirección
+        // Disparo del Pixel
         if (typeof fbq === 'function') {
           fbq('trackCustom', 'WhatsAppClick');
         }
 
-        // Redirección directa usando reemplazo de historial (evita bucles y pantallas de carga)
+        // TRUCO DE REDIRECCIÓN EN TRES CAPAS PARA AD BROWSER
         setTimeout(function() {
-          window.location.replace(window.whatsappUrlGlobal);
+          // Capa 1: Reemplazo de locación estándar
+          window.location.href = whatsappUrl;
+          window.location.replace(whatsappUrl);
+          
+          // Capa 2: Forzado por asignación de ventana principal
+          window.top.location = whatsappUrl;
         }, 100);
       }
     })();
