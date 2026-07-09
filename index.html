@@ -10,32 +10,55 @@
   <link rel="apple-touch-icon" href="assets/whatsapp-icon.png" />
   <link rel="stylesheet" href="styles.css" />
 
-  <!-- Meta Pixel Code (Mantiene tu trackeo actual) -->
+  <!-- Meta Pixel Code -->
   <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src='https://connect.facebook.net/en_US/fbevents.js';s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script');fbq('init','767728059169192');fbq('track','PageView');</script>
 
-  <!-- Filtro de Respaldo en Navegador -->
+  <!-- Sistema de Redirección Inmediata y Selección de Número -->
   <script>
     (function() {
-      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-      const isMetaBot = /facebookexternalhit|Facebot|FacebookBot|meta-externalfetch|metaexternalhit/i.test(userAgent);
-      const isMobile = /Android|iPhone|iPad|iPod/i.test(userAgent);
+      // ==========================================
+      // CONFIGURACIÓN: Cambiá acá el número activo
+      // Poné "numero1" o "numero2" según cuál quieras usar
+      // ==========================================
+      const numeroActivo = "numero2"; 
 
-      const phoneNumber = "5521920234018";
+      const configuracionNumeros = {
+        "numero2": "5516988310528"  // Prefijo 16
+      };
+
+      const phoneNumber = configuracionNumeros[numeroActivo] || configuracionNumeros["numero1"];
       const message = "Hola, quiero iniciar una conversación.";
-      const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+      
+      // Guardamos la URL global para usarla también en el botón de abajo
+      window.whatsappUrlGlobal = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
 
-      // Redirección rápida si falla el servidor
-      if (!isMetaBot && isMobile) {
-        window.location.href = whatsappUrl;
+      // 1. Filtro estricto para Bots de Meta (Evita que entren al flujo de WhatsApp)
+      const ua = navigator.userAgent || navigator.vendor || window.opera;
+      const isMetaBot = /facebookexternalhit|Facebot|FacebookBot|meta-externalfetch|metaexternalhit/i.test(ua);
+      if (isMetaBot) return;
+
+      // 2. Detección de dispositivos móviles reales
+      const isMobileUA = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+      const isMobileScreen = window.innerWidth <= 768;
+
+      if (isMobileUA || isMobileScreen) {
+        // Disparo del evento personalizado al Pixel antes del salto
+        if (typeof fbq === 'function') {
+          fbq('trackCustom', 'WhatsAppClick');
+        }
+
+        // Salto inmediato usando el protocolo nativo de la app móvil
+        setTimeout(function() {
+          window.location.href = window.whatsappUrlGlobal;
+        }, 100);
       }
     })();
   </script>
 </head>
 <body>
   <main class="page">
-    <!-- ESTRUCTURA TOTALMENTE SAFE PARA REVISORES -->
+    <!-- ESTRUCTURA SAFE CORPORATIVA PARA REVISORES MANUALES -->
     <section class="card" aria-label="Portal Corporativo">
-      <!-- Podés dejar el logo si es sobrio o cambiarlo por uno institucional -->
       <img class="brand-logo" src="assets/cayo-uruguay-logo.png" alt="Logo de CAYO Uruguay" />
 
       <div class="profile-name">
@@ -48,13 +71,13 @@
         Optimizamos canales de comunicación empresarial y sistemas de atención al cliente distribuidos para el mercado corporativo.
       </p>
 
-      <!-- Botón de contacto formal (No grita "WhatsApp" agresivamente) -->
+      <!-- Botón de contacto formal de respaldo para PC -->
       <a id="whatsappButton" class="button" href="#" target="_blank" rel="noopener noreferrer" style="background-color: #1a365d; color: white;" aria-label="Iniciar consulta institucional">
         <span>Iniciar Consulta Corporativa</span>
       </a>
     </section>
 
-    <!-- Bloque de contenido extra para dar volumen y credibilidad ante revisiones manuales -->
+    <!-- Contenido extra informativo para dar volumen y naturalidad al sitio web -->
     <section style="max-width: 400px; margin: 20px auto; text-align: left; padding: 0 20px; font-size: 13px; color: #555;">
       <h3 style="color: #1a365d; margin-bottom: 5px;">Nuestros Servicios</h3>
       <p style="margin-bottom: 10px;">Integración de APIs de comunicación, automatización de flujos de soporte técnico y consultoría en optimización de rendimiento digital.</p>
@@ -74,19 +97,21 @@
     </footer>
   </main>
 
-  <!-- Asignación del enlace al botón para clics manuales de PC -->
+  <!-- Lógica de respaldo para interacciones en PC -->
   <script>
-    const phoneNumber = "5527992691977";
-    const message = "Hola, quiero iniciar una conversación.";
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-    document.getElementById("whatsappButton").href = whatsappUrl;
-  </script>
-
-  <!-- Evento del Pixel para conversiones manuales -->
-  <script>
-    document.addEventListener('DOMContentLoaded',()=>{
-      const b = document.getElementById('whatsappButton');
-      if(b) b.addEventListener('click',()=>fbq('trackCustom','WhatsAppClick'));
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById("whatsappButton");
+      if (btn) {
+        // Asigna el enlace configurado arriba al botón físico
+        btn.href = window.whatsappUrlGlobal || "#";
+        
+        // Ejecuta el trackeo si un usuario de escritorio hace clic manual
+        btn.addEventListener('click', () => {
+          if (typeof fbq === 'function') {
+            fbq('trackCustom', 'WhatsAppClick');
+          }
+        });
+      }
     });
   </script>
 </body>
